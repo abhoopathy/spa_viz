@@ -1,12 +1,29 @@
+/**
+ * @author Aneesh Bhoopathy
+ *         aneesh.bhoopathy@gmail.com
+ */
+
+/**
+ * Creates an instance of ToolTip object
+ *
+ * @constructor
+ * @this {Backend}
+ * @param {document} document
+ */
 function ToolTip ( document ) {
 
-  this.leftOffset = -30;
-  this.topOffset = 10;
-  this.fadeDuration = 150;
-  this.hintsHidden = false;
+  this.$doc = document;
 
+  /* XY offsets of tool tip */
+  this.left_offset = -30;
+  this.top_offset = 10;
+  this.fade_duration = 150;
+  this.hints_hidden = false;
+
+  /* jquery obj of tool tip */
   this.$jq = $('<div class="help_tip"><div class="help_tip_arrow"></div><div class="help_tip_text"></div><div class="help_tip_hide">hide tips</div></div>');
 
+  /* when user clicks "HIDE TIPS", hide the tips */
   this.$jq
     .find('.help_tip_hide')
     .click( {obj: this}, function(event) {
@@ -14,51 +31,63 @@ function ToolTip ( document ) {
       tt.hideTips();
     });
 
-  this.$doc = document;
 
   /**
-   * position tool tip to right of the given
-   * jquery object
+   * Positions tool tip to right of the given
+   * jQuery object.
+   *
+   * @param {jQ} target jQuery object that receives tooltip
    */
-  this.positionTipRightOf = function(target) {
-    if ( !this.hintsHidden ) {
+  this.position_to_right_of = function(target) {
+    if ( !this.hints_hidden ) {
       this.$jq.hide();
 
       this.$jq = this.$jq.appendTo(target);
       var pos = target.offset();
-      var left = pos.left + target.outerWidth() + this.leftOffset;
-      var top = pos.top + this.topOffset;
+      var left = pos.left + target.outerWidth() + this.left_offset;
+      var top = pos.top + this.top_offset;
       this.position(left,top);
 
-      this.$jq.fadeIn( this.fadeDuration );
+      this.fade_in();
     }
 
   }
 
-  this.newTip = function(div,text) {
-    var toolTip = this;
-    div.hover(function () {
-      toolTip.positionTipRightOf(div);
-      toolTip.setText(text);
+  /**
+   * descript
+   *
+   * @param {jQ} target
+   * @param {String} text
+   */
+  this.new_tip = function(target,text) {
+    var tool_tip = this;
+    target.hover(function () {
+      tool_tip.position_to_right_of(target);
+      tool_tip.set_text(text);
     }, function() {
-      toolTip.fadeOut();
+      tool_tip.fade_out();
     });
   }
 
-  this.hideTips = function() {
+  /* helper functions */
+  this.hide_tips = function() {
     this.$jq.hide();
-    this.hintsHidden = true;
+    this.hints_hidden = true;
   }
 
   this.position = function(left,top) {
     this.$jq.css({ "left": left+"px", "top": top+"px" });
   }
 
-  this.fadeOut = function() {
-    this.$jq.fadeOut( this.fadeDuration );
+  this.fade_out = function() {
+    this.$jq.fadeOut( this.fade_duration );
   }
 
-  this.setText = function(text) {
+  this.fade_in = function() {
+    this.$jq.fadeIn( this.fade_duration );
+  }
+
+  this.set_text = function(text) {
     this.$jq.find('.help_tip_text').text(text);
   }
 

@@ -14,7 +14,9 @@
 <script src="js/jquery.ba-hashchange.min.js" type="text/javascript"></script>
 <script src="js/backend.js" type="text/javascript"></script>
 <script src="js/tooltip.js" type="text/javascript"></script>
+<script src="js/visualization.js" type="text/javascript"></script>
 <script src="js/sector-picker.js" type="text/javascript"></script>
+<script src="js/main.js" type="text/javascript"></script>
 
 
 <link rel="stylesheet" type="text/css" href="css/custom-theme/jquery-ui-1.8.11.custom.css"/>
@@ -50,7 +52,7 @@
         </div>
   </div>
 
-  <div id="selector_page">
+  <div id="sector_page">
 
     <div id="container" class="aBox" sec_path=" <?php echo $sec_path ?>">	
       <h2 id="sectorName">Sector: <?php echo $sec_name ?></h2>

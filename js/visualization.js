@@ -1,20 +1,8 @@
 // JavaScript Document
 
-$(document).ready(function() {
-
-
-  backend = new Backend();
-  vis = new Visualization( backend );
-
-  vis.init();
-
-});
-
 function Visualization( backend_obj ) {
-  sectorPath = trim($('#container').attr("sec_path"));
   this.backend = backend_obj;
-  var xmlData = null;
-  var sectorPath;
+  var xml_data = null;
 
   //Various display variables and depth variables
   var DISPLAY_WIDTH = $('#vizcontainer').width();
@@ -27,86 +15,84 @@ function Visualization( backend_obj ) {
   var frequency_hash = [];
   var TOP_COLORS = ["#FF6969","#36CCD1", "#5A96DC", "#FFB469", "#FF8E69"]
 
-
-  //the name for the miscellany sections... essentially all data that was unaccounted for
+  //
   var OTHER_NAME = "Other";
-  this.metric_id = 3;
+
+  var metric_id = 1;
 
   this.init = function() {
-    this.backend.get_categories( function() {
-
+    var vis = this
+    vis.backend.get_categories( function() {
       //TODO insert the proper metric ID
-      this.backend.get_XML_by_sector( metric_id , function() {
-        xmlData = backend.sector_XML;
-        this.init_UI();
+      vis.backend.get_XML_by_sector( metric_id , function() {
+        xml_data = vis.backend.sector_XML;
+        vis.init_UI();
       });
     });
 
   }
 
-  this.initUI = function() {
+  this.init_UI = function() {
     $('#backButton').button({ icons: { primary: "ui-icon-carat-1-w" } });
-    populateMetricPicker();
-    //$('#helpDialog').dialog({ autoOpen: false });
-    //$('#helpDialog').dialog('open');
-    //initViz();
+    populate_metric_picker();
+    init_viz();
   }
 
-  function populateMetricPicker(){
-    var $metricSelect = $('#metricSelect');
-    var metrics = backend.getMetricList();
+  function populate_metric_picker(){
+    var $metric_select = $('#metricSelect');
+    var metrics = vis.backend.get_metric_list();
 
     $.each(metrics, function(id, metric) {
       //"2":{ id:"2", name:"Water", path:"water" },
-      $metricSelect.append('<option value="'+id+'">'+metric.name+'</option>')
+      $metric_select.append('<option value="'+id+'">'+metric.name+'</option>')
 
     });
 
-    $metricSelect.change( function(event) {
+    $metric_select.change( function(event) {
       window.location = '#metric='+$(this).attr('value');
-      initViz();
+      init_viz();
     });
 
   }
 
 
-  function initViz(){
+  function init_viz(){
     //sample xml code
-    data = $(xmlData);
-    //console.log(xmlData)
-    
+    data = $(xml_data);
+    //console.log(xml_data)
+
     var outer = data.children().first().children().first();
     main = createChildren(outer, 1);
-    
+
     //Sort the frequency hash for the top-category display
     frequency_hash.sort(function(a,b) {
       return b.value - a.value;
     });
-    
-    
-    //Clear out the undefined entries
+
+
+   //Clear out the undefined entries
     frequency_hash = frequency_hash.filter(function(){ return true });
-    
+
     hash_total = 0;
     $.each(frequency_hash, function(index, value) {
       if(typeof value != 'undefined')
         hash_total += value.value;
     });
-    
+
     $('#top_categories').html('');
 
     for(i = 0; i < TOP_CATEGORIES; i++){
       width = parseFloat(frequency_hash[i].value / hash_total) * 100;
-      name = backend.getSectorNameByID(frequency_hash[i].number);
+      name = vis.backend.get_sector_name_by_id(frequency_hash[i].number);
       cat = $('#top_categories').append('<div class="top_category top_' + i + '" rank="' + i + '" section="' + frequency_hash[i].number + '" style="width:' + Math.round(width) + '%;"><div class="pct">' + Math.round(width) + '%' + '</div><div class="name">'+ name +'</div></div>')
     }
-    
+
     $('.top_category').mouseover(function() {
       id = parseInt($(this).attr('section'));
       rank = parseInt($(this).attr('rank'));
       $('.section_' + id).addClass('top_' + rank);
     });
-    
+
     $('.top_category').mouseout(function() {
       id = parseInt($(this).attr('section'));
       rank = parseInt($(this).attr('rank'));
@@ -121,19 +107,12 @@ function Visualization( backend_obj ) {
     /* side tool tips */
     var tt = new ToolTip( $(document) );
 
-    $('#top_categories').hover(function () {
-      tt.positionTipRightOf( $('#top_categories') );
-      tt.setText("These industries represent the top 5 overall emission sources within the sector. Hover over them to see where they appear in the path analysis");
-    }, function() {
-      tt.fadeOut();
-    });
+    //TODO syntax change
 
-    $('#vizcontainer').hover(function () {
-      tt.positionTipRightOf( $('#viz') );
-      tt.setText("Each \"depth\" on the tree chart represents the component make-up of emission sources. Click on a component to see it's subsequent components in the next depth.");
-    }, function() {
-      tt.fadeOut();
-    });
+    tt.new_tip( $('#top_categories'),
+        "These industries represent the top 5 overall emission sources within the sector. Hover over them to see where they appear in the path analysis");
+    tt.new_tip( $('#vizcontainer'),
+        "Each \"depth\" on the tree chart represents the component make-up of emission sources. Click on a component to see it's subsequent components in the next depth." );
 
     render( main );
   }
@@ -155,7 +134,7 @@ function Visualization( backend_obj ) {
     var parent_name = (node.width() > (8 * node.name.length)) ? node.name : node.acronym;
     var parent = $('<div class="' + node.getClass(true) + '" title="' + node.getTitle() + '" style="width:' + node.width() + 'px;"><span class="name">' + parent_name + '</span></div>');
     wrapper.append(parent);
-    parent.tipsy();
+    //parent.tipsy();
 
     //Add the children to the depth_wrappers
     $.each(node.children, function(index, child) {
@@ -168,7 +147,7 @@ function Visualization( backend_obj ) {
       //}
       //alert('width: ' + width + ', length: ' + (8*child.name.length));
       var new_div = $('<div class="' + child.getClass() +'" title="' + title + '" style="width:' + width + 'px"></div>');
-      new_div.tipsy({live: true});
+      //new_div.tipsy({live: true});
       new_div.append('<span class=\"name\">' + name + '</span><br /><span class=\"value\">' + child.prettyValue() + '</span><br /><span class="percent">' + decimalToPercent(node.childPercentage(child)) + '%</sapn>')
       
       $(wrapper).append(new_div);
@@ -206,8 +185,8 @@ function Visualization( backend_obj ) {
 
     var name = node.attr('name');
 
-    if(backend.getSectorByID(parseInt(name))) {
-      name = backend.getSectorNameByID(name);
+    if(vis.backend.get_sector_by_id(parseInt(name))) {
+      name = vis.backend.get_sector_name_by_id(name);
     }
 
     //Use hash to calculate top five sectors

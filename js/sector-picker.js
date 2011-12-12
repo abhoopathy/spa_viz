@@ -1,21 +1,21 @@
-// JavaScript Document
+//JavaScript Document
 
-$(document).ready(function() {
+function Controller( ) {
   var backend = new Backend();
   var sector_picker = new SectorPicker( backend );
+  var visualization = new Visualization( backend );
 
-  // testing the new hashchange handler
-  $(window).hashchange( function(){
-    console.log(window.location)
-    $('#selector_page').fadeOut();
-  });
-
-
-  //TODO move this?
-  sector_picker.init_UI_buttons();
-
+  /* initialize*/
   backend.get_categories( function(){ sector_picker.init_UI() } );	
-});
+
+  this.show_selector_page = function(){
+    visualization.hide()
+    sector_picker.show()
+  }
+
+
+
+}
 
 
 function SectorPicker( backend_obj ) {
@@ -35,6 +35,7 @@ function SectorPicker( backend_obj ) {
   this.init_UI = function (){
 
     //this.populate_metric_picker();
+    this.init_UI_buttons();
     this.populate_sector_picker();
     this.populate_category_dialog();
     this.init_tool_tips();
@@ -67,9 +68,9 @@ function SectorPicker( backend_obj ) {
     var tt = new ToolTip( $(document) );
 
     //TODO change this help text
-    tt.newTip( $('#chooseMetric') , "Begin typing a sector name to visualize it's SPA visualization")
-    tt.newTip( $('#searchBySector') , "Begin typing a sector name to visualize it's SPA visualization")
-    tt.newTip( $('#browseByCategory') , "Browse the sectors by expanding the industry categories.")
+    tt.new_tip( $('#chooseMetric'), "Begin typing a sector name to visualize it's SPA visualization" );
+    tt.new_tip( $('#searchBySector'), "Begin typing a sector name to visualize it's SPA visualization" );
+    tt.new_tip( $('#browseByCategory'), "Browse the sectors by expanding the industry categories." );
   }
 
   this.submit_sector = function(sector_id) {
