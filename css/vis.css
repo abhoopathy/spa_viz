@@ -1,0 +1,199 @@
+#vizcontainer {
+}
+#container {
+}
+#backButton {}
+
+#sectorName {
+  float: left;
+}
+#metricChooserBox {
+  margin-top: 3px;
+  float: right;
+}
+
+#metricSelect {
+  width: 150px;
+}
+
+/*Begin nolans css*/
+
+#viz {
+	width: 100%;
+	margin: 0 auto;
+}
+
+#top_categories {
+	height: 60px;
+	width: 100%;
+	margin: 0 auto;
+	margin-bottom: 10px;
+}
+
+.top_category {
+	height: 60px;
+	display: block;
+	float: left;
+	background-color: #f5f5f5;
+	margin-right: 3px;
+	overflow: hidden;
+	color: white;
+}
+
+.top_category:hover {
+	opacity: .8;
+}
+
+.top_category .name {
+	font-size: .75em;
+	padding-left: 4px;
+}
+
+.top_category .pct {
+	padding: 4px 0 0 4px;
+}
+
+.block {
+	width: 100%;
+	height: 60px;
+	display: block;
+	float:left;
+	background-color: #f2f2f2;
+	border-right: 1px solid white;
+	border-bottom: 2px solid white;
+	border-top: 2px solid #ddd;
+	font-size: 10px;
+	overflow: hidden;
+}
+
+.block span {
+	padding: 4px;
+}
+
+.block.children {
+	border-bottom: 2px solid #995A6C;
+}
+
+.block:hover {
+	background-color: #ddd;
+}
+
+.selected {
+	background-color: #ddd;
+}
+
+.depth_wrapper {
+	margin-bottom:2px;
+}
+
+.clearfix:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+
+.tooltip {
+	position:relative;
+	display: none;
+	width: 50px;
+	height: 50px;
+}
+
+.tooltip:hover {
+	display: block;
+}
+
+/* Depth Margins */
+.depth_wrapper.depth_2 {
+	margin-left: 20px;
+}
+
+.depth_wrapper.depth_3 {
+	margin-left: 40px;
+}
+
+.depth_wrapper.depth_4 {
+	margin-left: 60px;
+}
+
+.depth_wrapper.depth_5 {
+	margin-left: 80px;
+}
+
+/* Top Category Colors */
+.top_0 {
+	background-color: #ff6969 !important;
+}
+
+.top_1 {
+	background-color: #36ccd1 !important;
+}
+
+.top_2 {
+	background-color: #5a96dc !important;
+}
+
+.top_3 {
+	background-color: #ffb469 !important;
+}
+
+.top_4 {
+	background-color: #ff8e69 !important;
+}
+
+
+/* Help CSS */
+#help {
+	font-family: helvetica;
+	padding: 10px;
+	color: #333;
+	line-height: 19px;
+	font-size: 15px;
+}
+
+#help ul, li {
+	margin: 0;
+	padding: 0;
+}
+
+#help li {
+	list-style-type: none;
+	padding: 10px 0;
+	border-bottom: 1px dotted #ccc;
+}
+
+#help h2 {
+	padding: 0;
+	margin: 0;
+}
+
+/* Tab CSS */
+.tab {
+	display: none;
+	padding: 10px;
+	border-top: 1px solid #555;
+	margin-top: -1px;
+}
+
+.tab.selected {
+	display: block;
+}
+
+#help a {
+	text-decoration: none;
+	color: #333;
+	padding: 10px;
+	display: block;
+	float: left;
+}
+
+#help a.selected {
+	border: 1px solid #555;
+	border-bottom: 1px solid white;
+}
+
+#help a:hover {
+	color: #555;
+}

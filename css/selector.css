@@ -1,0 +1,90 @@
+
+/*
+#toolbar {	
+	width: 100%;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}*/
+
+/* Choose Metric drop down area */
+#metricSelect {
+  font-size: 3em;
+}
+
+/* Search by sector autocomplete area */
+
+.ui-autocomplete {
+	max-height: 100px;
+	overflow-y: auto;
+	/* prevent horizontal scrollbar */
+	overflow-x: hidden;
+	/* add padding to account for vertical scrollbar */
+	padding-right: 20px;
+}
+
+#searchbg {
+	background-image:url(../images/searchbg.jpg);
+	width: 543px;
+	height: 39px;
+}
+
+#sectorAutocomplete {
+	margin-left: 30px;
+	width: 510px;
+	height: 32px;
+	border: none;
+	background:none;
+	margin-top: 2px;
+}
+
+#selectASector{
+	padding: 10px;
+	width: 960px;
+}
+
+
+/* Browse by category dialog */
+
+#browseByCategoryDialog {
+}
+
+.catTriColumn {
+	width: 30%;
+	float: left;
+	margin-left: 20px;
+}
+
+.catDiv {
+	border-top: solid 1px #CCC;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+.plusMinus{
+	float:left;
+	margin-top: 3px;
+	margin-right: 5px;
+}
+
+.catDiv h3{
+	margin: 0px;
+	margin-bottom: 5px;
+	padding: 0px;
+	float:left;
+}
+
+.catSubSectors{
+	list-style-type:none;
+	padding: 0; 
+	margin: 0;
+	margin-left: 30px;
+}
+
+.catSubSectors li{
+	margin-bottom: 8px;
+}
+
+.catSubSectors li a{
+	text-decoration: none;
+	color: inherit;
+}
