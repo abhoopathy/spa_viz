@@ -2,18 +2,57 @@
 
 function Controller( ) {
   var backend = new Backend();
+  var controller = this;
   var sector_picker = new SectorPicker( backend );
   var visualization = new Visualization( backend );
+
+  $(window).hashchange( function(){
+    var params = get_params()
+
+    console.log(params);
+
+    if ("select" in params) {
+      controller.show_selector_page();
+      return;
+    }
+
+    if ("vis" in params) {
+      controller.show_sector_page( params["vis"] );
+      return;
+    }
+
+  });
 
   /* initialize*/
   backend.get_categories( function(){ sector_picker.init_UI() } );	
 
   this.show_selector_page = function(){
-    visualization.hide()
-    sector_picker.show()
+    sector_picker.show();
+    visualization.hide();
   }
 
+  this.show_sector_page = function( sec_id ){
+    sector_picker.hide();
+    visualization.show();
+    visualization.init();
+  }
 
+  this.set_win_location = function(string) {
+    window.location = "#"+string;
+  }
+
+  get_params = function() {
+    var parameters = {};
+    var a = window.location.hash;
+    var b = a.replace(/#/,'').split(/&/);
+
+    $.each( b, function(i,param_string) {
+      var arr = param_string.split(/=/);
+      parameters[ arr[0] ] = arr[1];
+    });
+
+    return parameters;
+  }
 
 }
 
@@ -23,13 +62,18 @@ function SectorPicker( backend_obj ) {
   this.$browse_by_cat_dialog = null;
   this.$browse_by_cat_buton = null;
   this.backend = backend_obj;
+  var $selector_page = $('#selector_page');
+
+  this.hide = function() { $selector_page.hide(); }
+  this.show = function() { $selector_page.show(); }
 
   this.init_UI_buttons = function() {
 
+    /*
     $sector_selector_page = $('#selectASector');
     $viz_container = $('#vizcontainer');
     $container = $('#container');
-
+    */
   }
 
   this.init_UI = function (){
@@ -76,7 +120,7 @@ function SectorPicker( backend_obj ) {
   this.submit_sector = function(sector_id) {
     //add code to hide selector and show vizcontainer
     //window.location = "sector.php?sec_id="+sectorID+"&name="+backend.getSectorNameByID(sectorID)+"&metric="+$('#metricSelect').attr('value')
-    window.location = "#dfdf"
+    window.location = "#vis="+sector_id
   }
 
   this.populate_category_dialog = function() {

@@ -2,10 +2,11 @@
 
 function Visualization( backend_obj ) {
   this.backend = backend_obj;
+  var $sector_page = $('#sector_page');
   var xml_data = null;
 
   //Various display variables and depth variables
-  var DISPLAY_WIDTH = $('#vizcontainer').width();
+  this.DISPLAY_WIDTH = $('#vizcontainer').width();
   var BLOCK_HEIGHT = 42;
   var LEVELS = 5;
   var RELEVANCE_THRESHOLD = .1;
@@ -21,26 +22,31 @@ function Visualization( backend_obj ) {
   var metric_id = 1;
 
   this.init = function() {
-    var vis = this
+    var vis = this;
+
     vis.backend.get_categories( function() {
-      //TODO insert the proper metric ID
       vis.backend.get_XML_by_sector( metric_id , function() {
         xml_data = vis.backend.sector_XML;
+        console.log(xml_data);
         vis.init_UI();
       });
+
     });
 
   }
 
+  this.hide = function() { $sector_page.hide(); }
+  this.show = function() { $sector_page.show(); }
+
   this.init_UI = function() {
     $('#backButton').button({ icons: { primary: "ui-icon-carat-1-w" } });
-    populate_metric_picker();
-    init_viz();
+    this.populate_metric_picker();
+    this.init_viz();
   }
 
-  function populate_metric_picker(){
+  this.populate_metric_picker = function(){
     var $metric_select = $('#metricSelect');
-    var metrics = vis.backend.get_metric_list();
+    var metrics = this.backend.get_metric_list();
 
     $.each(metrics, function(id, metric) {
       //"2":{ id:"2", name:"Water", path:"water" },
@@ -49,20 +55,19 @@ function Visualization( backend_obj ) {
     });
 
     $metric_select.change( function(event) {
-      window.location = '#metric='+$(this).attr('value');
-      init_viz();
+      window.location += '&metric='+$(this).attr('value');
     });
 
   }
 
 
-  function init_viz(){
+  this.init_viz = function(){
     //sample xml code
     data = $(xml_data);
-    //console.log(xml_data)
+    console.log(data)
 
     var outer = data.children().first().children().first();
-    main = createChildren(outer, 1);
+    main = this.create_children(outer, 1);
 
     //Sort the frequency hash for the top-category display
     frequency_hash.sort(function(a,b) {
@@ -83,7 +88,7 @@ function Visualization( backend_obj ) {
 
     for(i = 0; i < TOP_CATEGORIES; i++){
       width = parseFloat(frequency_hash[i].value / hash_total) * 100;
-      name = vis.backend.get_sector_name_by_id(frequency_hash[i].number);
+      name = this.backend.get_sector_name_by_id(frequency_hash[i].number);
       cat = $('#top_categories').append('<div class="top_category top_' + i + '" rank="' + i + '" section="' + frequency_hash[i].number + '" style="width:' + Math.round(width) + '%;"><div class="pct">' + Math.round(width) + '%' + '</div><div class="name">'+ name +'</div></div>')
     }
 
@@ -114,11 +119,11 @@ function Visualization( backend_obj ) {
     tt.new_tip( $('#vizcontainer'),
         "Each \"depth\" on the tree chart represents the component make-up of emission sources. Click on a component to see it's subsequent components in the next depth." );
 
-    render( main );
+    this.render( main );
   }
 
 
-  function render( node ) {
+   this.render = function( node ) {
     
     //Get rid of all nodes below the one recently clicked
     for(i = node.depth+1; i <= LEVELS; i++) {
@@ -180,13 +185,16 @@ function Visualization( backend_obj ) {
   }
 
 
-  function createChildren( node, node_depth ) {
+  this.create_children = function( node, node_depth ) {
+
+    var vis = this;
+
     node = $(node);
 
     var name = node.attr('name');
 
-    if(vis.backend.get_sector_by_id(parseInt(name))) {
-      name = vis.backend.get_sector_name_by_id(name);
+    if(this.backend.get_sector_by_id(parseInt(name))) {
+      name = this.backend.get_sector_name_by_id(name);
     }
 
     //Use hash to calculate top five sectors
@@ -211,7 +219,7 @@ function Visualization( backend_obj ) {
     var sum = 0;
 
     $.each(node.children(), function(index, child) {
-      c = createChildren(child, node_depth+1)
+      c = vis.create_children(child, node_depth+1)
       sum += c.desc;
       d.addChild(c);				
     });
@@ -233,88 +241,101 @@ function Visualization( backend_obj ) {
   }
 
 
-  function Depth(id, name, value, desc, depth) {
-    this.name = name; //getSectorNameByID(parseInt(name));
-    this.acronym = acronym(name);
-    this.id = id;
-    this.value = value;
-    this.desc = desc;
-    this.children = new Array();
-    this.parent = null;
-    this.depth = depth;
+}
+function trim(str) {
+    return str.replace(/^\s+|\s+$/g,"");
+}
 
-    this.addChild = function(child) {
-      if(child != null) {
-        this.children.push(child);
-        child.setParent(this);
-      }
+function truncate(string, digits) {
+  return (string).toString().slice(0, digits+1);
+}
+
+function decimalToPercent(decimal) {
+  return truncate((decimal * 100).toString(), 3);
+}
+
+function Depth(id, name, value, desc, depth) {
+  this.name = name; //getSectorNameByID(parseInt(name));
+  this.acronym = acronym(name);
+  this.id = id;
+  this.value = value;
+  this.desc = desc;
+  this.children = new Array();
+  this.parent = null;
+  this.depth = depth;
+
+  this.addChild = function(child) {
+    if(child != null) {
+      this.children.push(child);
+      child.setParent(this);
     }
+  }
 
-    this.setParent = function(parent) {
-      this.parent = parent;
-    }
+  this.setParent = function(parent) {
+    this.parent = parent;
+  }
 
-    this.addDiv = function(div) {
-      this.div = div;
-    }
+  this.addDiv = function(div) {
+    this.div = div;
+  }
 
 
-    //returns the percentage of the parent that the child makes up
-    this.childPercentage = function(child) {
-      var total = this.desc;
-      width = parseFloat(child.desc / total)
-      return width;
+  //returns the percentage of the parent that the child makes up
+  this.childPercentage = function(child) {
+    var total = this.desc;
+    width = parseFloat(child.desc / total)
+    return width;
+  }
+  
+  //returns the width of the child based on the percentage of total output
+  this.childWidth = function(child) {
+    return this.childPercentage(child) * (this.DISPLAY_WIDTH - 40*(this.depth - 1));
+  }
+  
+  //returns the width of the parent based on the percentage of total output
+  this.width = function(child) {
+    console.log(child);
+    return this.percentage() * (this.DISPLAY_WIDTH - 40 * (this.depth - 1));
+  }
+  
+  //returns the percentage of the actual node's value is contained by that node's industry
+  this.percentage = function(child) {
+    return parseFloat(this.value / this.desc);
+  }
+  
+  this.getClass = function(parent) {
+    //parent boolean is for when we're getting the main div for the parent -- a.k.a. the white divs on left
+    klass = "block depth_" + this.depth + " section_" + this.id;
+
+    if(parent == true) {
+      klass += ' parent';
+    }else {
+      if (this.children.length > 0) klass += ' children';
     }
     
-    //returns the width of the child based on the percentage of total output
-    this.childWidth = function(child) {
-      return this.childPercentage(child) * (DISPLAY_WIDTH - 40*(this.depth - 1));
-    }
-    
-    //returns the width of the parent based on the percentage of total output
-    this.width = function(child) {
-      return this.percentage() * (DISPLAY_WIDTH - 40 * (this.depth - 1));
-    }
-    
-    //returns the percentage of the actual node's value is contained by that node's industry
-    this.percentage = function(child) {
-      return parseFloat(this.value / this.desc);
-    }
-    
-    this.getClass = function(parent) {
-      //parent boolean is for when we're getting the main div for the parent -- a.k.a. the white divs on left
-      klass = "block depth_" + this.depth + " section_" + this.id;
+    return klass;
+  }
 
-      if(parent == true) {
-        klass += ' parent';
-      }else {
-        if (this.children.length > 0) klass += ' children';
-      }
-      
-      return klass;
+  this.getTitle = function() {
+    if(this.parent != null) {
+      return this.name + ' (' + this.prettyValue() + ', ' + decimalToPercent(this.parent.childPercentage(this)) + '%)';
+    }else {
+      return this.name + ' (' + truncate(this.value, 3) + ', ' + decimalToPercent(this.percentage()) + '%)';
     }
+  }
 
-    this.getTitle = function() {
-      if(this.parent != null) {
-        return this.name + ' (' + this.prettyValue() + ', ' + decimalToPercent(this.parent.childPercentage(this)) + '%)';
-      }else {
-        return this.name + ' (' + truncate(this.value, 3) + ', ' + decimalToPercent(this.percentage()) + '%)';
-      }
+  this.prettyValue = function() {
+    var str = truncate(this.desc.toString(), 3);
+    if(str[3] == '.') {
+      return truncate(str, 2);
     }
-
-    this.prettyValue = function() {
-      var str = truncate(this.desc.toString(), 3);
-      if(str[3] == '.') {
-        return truncate(str, 2);
-      }
-      return str;
-    }
-
+    return str;
   }
 
   function acronym(str) {
     a = "";
-    $.each(str.split(' '), function(index, word) {
+
+    $.each( str.split(' '), function(index, word) {
       if(word.toUpperCase() == "AND") {
         a += "&";
       }else {
@@ -325,14 +346,6 @@ function Visualization( backend_obj ) {
     return a;
   }
 
-  function truncate(string, digits) {
-    return (string).toString().slice(0, digits+1);
-  }
 
-  function decimalToPercent(decimal) {
-    return truncate((decimal * 100).toString(), 3);
-  }
 }
-function trim(str) {
-    return str.replace(/^\s+|\s+$/g,"");
-}
+
