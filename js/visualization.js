@@ -160,7 +160,7 @@ function Visualization( backend_obj ) {
       //alert('width: ' + width + ', length: ' + (8*child.name.length));
       var new_div = $('<div class="' + child.getClass() +'" title="' + title + '" style="width:' + width + 'px"></div>');
       //new_div.tipsy({live: true});
-      new_div.append('<span class=\"name\">' + name + '</span><br /><span class=\"value\">' + child.prettyValue() + '</span><br /><span class="percent">' + decimalToPercent(node.childPercentage(child)) + '%</sapn>')
+      new_div.append('<span class=\"name\">' + name + '</span><br /><span class=\"value\">' + child.prettyValue() + '</span><br /><span class="percent">' + decimalToPercent(node.childPercentage(child)) + '%</span>')
       
       $(wrapper).append(new_div);
       if(child.children.length != 0) {
