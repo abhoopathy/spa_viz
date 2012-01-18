@@ -7,9 +7,7 @@ function Controller( ) {
   var visualization = new Visualization( backend );
 
   $(window).hashchange( function(){
-    var params = get_params()
-
-    console.log(params);
+    var params = get_params();
 
     if ("select" in params) {
       controller.show_selector_page();

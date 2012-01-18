@@ -1,8 +1,16 @@
 // JavaScript Document
 
 function Visualization( backend_obj ) {
+
+  //Backend object, see backend.js
   this.backend = backend_obj;
+
+  // Deals with whole visualization page
   var $sector_page = $('#sector_page');
+  this.hide = function() { $sector_page.hide(); }
+  this.show = function() { $sector_page.show(); }
+  var vis = this;
+
   var xml_data = null;
 
   //Various display variables and depth variables
@@ -22,12 +30,10 @@ function Visualization( backend_obj ) {
   var metric_id = 1;
 
   this.init = function() {
-    var vis = this;
 
     vis.backend.get_categories( function() {
       vis.backend.get_XML_by_sector( metric_id , function() {
         xml_data = vis.backend.sector_XML;
-        console.log(xml_data);
         vis.init_UI();
       });
 
@@ -35,10 +41,9 @@ function Visualization( backend_obj ) {
 
   }
 
-  this.hide = function() { $sector_page.hide(); }
-  this.show = function() { $sector_page.show(); }
-
   this.init_UI = function() {
+
+    //initialize back button TODO put this somewhere else
     $('#backButton').button({ icons: { primary: "ui-icon-carat-1-w" } });
     this.populate_metric_picker();
     this.init_viz();
@@ -61,16 +66,16 @@ function Visualization( backend_obj ) {
   }
 
 
-  this.init_viz = function(){
-    //sample xml code
+  this.init_viz = function() {
     data = $(xml_data);
-    console.log(data)
 
     var outer = data.children().first().children().first();
+    console.log( outer );
     main = this.create_children(outer, 1);
 
+
     //Sort the frequency hash for the top-category display
-    frequency_hash.sort(function(a,b) {
+    frequency_hash.sort( function(a,b) {
       return b.value - a.value;
     });
 
@@ -124,7 +129,7 @@ function Visualization( backend_obj ) {
 
 
    this.render = function( node ) {
-    
+
     //Get rid of all nodes below the one recently clicked
     for(i = node.depth+1; i <= LEVELS; i++) {
       $('.depth_' + i).fadeOut(function(){
@@ -134,7 +139,7 @@ function Visualization( backend_obj ) {
 
     wrapper = $('<div class="depth_wrapper clearfix depth_' + node.depth + '" style="display:none;"></div>')
     $('.block_wrapper').append(wrapper);
-    
+
     //Add the parent to the depth_wrapper
     var parent_name = (node.width() > (8 * node.name.length)) ? node.name : node.acronym;
     var parent = $('<div class="' + node.getClass(true) + '" title="' + node.getTitle() + '" style="width:' + node.width() + 'px;"><span class="name">' + parent_name + '</span></div>');
@@ -143,9 +148,11 @@ function Visualization( backend_obj ) {
 
     //Add the children to the depth_wrappers
     $.each(node.children, function(index, child) {
+
+      console.log( node.childWidth(child) );
       var width = node.childWidth(child) -1; 
       if(width < 0) return;
-      
+
       var name = (width > (8 * child.name.length)) ? child.name : child.acronym;
       //if(name == child.acronym) {
       var title = child.getTitle();
@@ -174,8 +181,7 @@ function Visualization( backend_obj ) {
               $(this).addClass('selected');
               $(this).animate({opacity: 1});
               $(this).parent().children().not('.selected, .parent').animate({opacity: .35});
-              render(child);
-              
+              vis.render(child);
             }
         });
       }
@@ -202,9 +208,7 @@ function Visualization( backend_obj ) {
     if( node.children().length == 0) {
       if(typeof frequency_hash[id] !== 'undefined') {
         frequency_hash[id].value += parseFloat(node.attr('value'));		
-        //console.log(frequency_hash.length);
       }else{
-    //		console.log(parseFloat(node.attr('value')));		
         frequency_hash[id] = {
           number: id,
           value: parseFloat(node.attr('value'))
@@ -212,7 +216,7 @@ function Visualization( backend_obj ) {
       }
     }
 
-    var d = new Depth(id, name, parseFloat(node.attr('value')), parseFloat(node.attr('descendants')), node_depth );
+    var d = new Depth(id, name, parseFloat(node.attr('value')), parseFloat(node.attr('descendants')), node_depth, this );
 
     //calculate the 'other' category
     var total = d.desc - d.value;
@@ -225,7 +229,7 @@ function Visualization( backend_obj ) {
     });
 
     if(sum < (d.desc-d.value) && d.children.length > 0) {
-      d.addChild(new Depth(0, OTHER_NAME, parseFloat((d.desc-d.value) - sum), parseFloat((d.desc-d.value) - sum), node_depth+1));
+      d.addChild(new Depth(0, OTHER_NAME, parseFloat((d.desc-d.value) - sum), parseFloat((d.desc-d.value) - sum), node_depth+1, this));
     }
 
     //Order from largest to smallest
@@ -254,7 +258,7 @@ function decimalToPercent(decimal) {
   return truncate((decimal * 100).toString(), 3);
 }
 
-function Depth(id, name, value, desc, depth) {
+function Depth(id, name, value, desc, depth, vis_obj) {
   this.name = name; //getSectorNameByID(parseInt(name));
   this.acronym = acronym(name);
   this.id = id;
@@ -263,6 +267,7 @@ function Depth(id, name, value, desc, depth) {
   this.children = new Array();
   this.parent = null;
   this.depth = depth;
+  this.vis_obj = vis_obj;
 
   this.addChild = function(child) {
     if(child != null) {
@@ -279,7 +284,6 @@ function Depth(id, name, value, desc, depth) {
     this.div = div;
   }
 
-
   //returns the percentage of the parent that the child makes up
   this.childPercentage = function(child) {
     var total = this.desc;
@@ -289,13 +293,12 @@ function Depth(id, name, value, desc, depth) {
   
   //returns the width of the child based on the percentage of total output
   this.childWidth = function(child) {
-    return this.childPercentage(child) * (this.DISPLAY_WIDTH - 40*(this.depth - 1));
+    return this.childPercentage(child) * (this.vis_obj.DISPLAY_WIDTH - 40*(this.depth - 1));
   }
   
   //returns the width of the parent based on the percentage of total output
   this.width = function(child) {
-    console.log(child);
-    return this.percentage() * (this.DISPLAY_WIDTH - 40 * (this.depth - 1));
+    return this.percentage() * (this.vis_obj.DISPLAY_WIDTH - 40 * (this.depth - 1));
   }
   
   //returns the percentage of the actual node's value is contained by that node's industry
