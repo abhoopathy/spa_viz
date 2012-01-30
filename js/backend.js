@@ -16,7 +16,7 @@ function Backend() {
 
   this.sector_list = new Array() /* array of each sector in DB */
   this.category_list = new Array() /* array of each category in DB */
-  this.DOMAIN = "http://localhost/componentviz/"; /* Domain where php calls should be made */
+  this.DOMAIN = ""; /* Domain where php calls should be made */
   this.sector_XML = null; /* XML data for sector */
   this.metrics = {"1":{ id:"1", name:"Emissions", path:"emissions" }, /* array of metrics for UI */
                   "2":{ id:"2", name:"Water", path:"water" },
