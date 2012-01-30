@@ -48,7 +48,7 @@
         	<div class="catTriColumn"></div>
         	<div class="catTriColumn"></div>
         	<div class="catTriColumn"></div>
-            <div class="cleardiv"></div>
+          <div class="cleardiv"></div>
         </div>
   </div>
 

@@ -78,13 +78,16 @@ function Backend() {
    * Retrieves the correct XMLdata
    */
   this.get_XML_by_sector_and_metric = function (sector_id, metric_id, cb ) {
-		if(metric_id == undefined) metric_id = 1;
-		
-    var metric_subpath = this.metrics[metric_id].path
-		var sector_file = sector_id + '.xml';
     var obj = this;
-		var params = controller.get_params();
+		var sector_file = sector_id + '.xml';
 
+		if(metric_id != undefined) {
+	    var metric_subpath = this.metrics[metric_id].path
+		} else {
+			metric_subpath = this.metrics[1].path;
+		}
+		
+		console.log(this.DOMAIN + "xml/"+ metric_subpath + "/" + sector_file);
     //newLoop$1MSector_234
     $.ajax({
         type: "GET",
@@ -92,13 +95,9 @@ function Backend() {
         dataType: "xml",
         success: function(xml) {
           obj.sector_XML = xml;
-          if(cb != undefined) {
-						cb();
-					}
+					cb(obj.sector_XML);
         }
       });	
-
-		return obj.sector_XML;
   }
 
   /**

@@ -216,7 +216,7 @@ function SectorPicker( backend_obj ) {
     $( "#sectorAutocomplete" ).autocomplete({
       source: available_tags,
       minLength: 1,
-      select: function(event,ui) {
+      select: function(event, ui) {
         $(this).val(ui.item.label);
         obj.submit_sector(ui.item.value);
         $(this).blur();

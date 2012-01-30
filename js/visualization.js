@@ -11,8 +11,6 @@ function Visualization( backend_obj ) {
   this.show = function() { $sector_page.show(); }
   var vis = this;
 
-  var xml_data = null;
-
   //Various display variables and depth variables
   this.DISPLAY_WIDTH = $('#vizcontainer').width();
   var BLOCK_HEIGHT = 42;
@@ -31,11 +29,13 @@ function Visualization( backend_obj ) {
 		var params = controller.get_params();
 		sector_id = params.vis;
 		metric_id = params.metric;
+		var xml_data;
 		
-		vis.backend.get_categories();
-		vis.xml_data = vis.backend.get_XML_by_sector_and_metric(sector_id, metric_id);
-		
-		vis.init_UI();
+		vis.backend.get_categories(function() {
+			vis.backend.get_XML_by_sector_and_metric(sector_id, metric_id,	function() {
+				vis.init_UI();
+			});
+		});
 
   }
 
@@ -44,7 +44,8 @@ function Visualization( backend_obj ) {
     //initialize back button TODO put this somewhere else
     $('#backButton').button({ icons: { primary: "ui-icon-carat-1-w" } });
     this.populate_metric_picker();
-    this.init_viz();
+		xml_data = vis.backend.sector_XML;
+		this.create_viz(xml_data);
   }
 
   this.populate_metric_picker = function(){
@@ -57,7 +58,6 @@ function Visualization( backend_obj ) {
     $.each(metrics, function(id, metric) {
       //"2":{ id:"2", name:"Water", path:"water" },
       $metric_select.append('<option value="'+id+'">'+metric.name+'</option>')
-
     });
 
 		$metric_select[0].selectedIndex = params.metric - 1;
@@ -69,51 +69,20 @@ function Visualization( backend_obj ) {
 
   }
 
+	
 
-  this.init_viz = function() {
-    data = $(xml_data);
+	
 
+  this.create_viz = function(xml_data) {
+	  var data = $(xml_data);
     var outer = data.children().first().children().first();
-
+		
 		frequency_hash = [];
 
     main = this.create_children(outer, 1);
 
+		vis.create_top_categories(frequency_hash);
 
-    //Sort the frequency hash for the top-category display
-    frequency_hash.sort( function(a,b) {
-      return b.value - a.value;
-    });
-
-
-   //Clear out the undefined entries
-    frequency_hash = frequency_hash.filter(function(){ return true });
-
-    hash_total = 0;
-    $.each(frequency_hash, function(index, value) {
-      if(typeof value != 'undefined')
-        hash_total += value.value;
-    });
-
-    $('#top_categories').html('');
-
-    for(i = 0; i < TOP_CATEGORIES; i++){
-      width = parseFloat(frequency_hash[i].value / hash_total) * 100;
-      name = this.backend.get_sector_name_by_id(frequency_hash[i].number);
-      cat = $('#top_categories').append('<div class="top_category top_' + i + '" rank="' + i + '" section="' + frequency_hash[i].number + '" style="width:' + Math.round(width) + '%;"><div class="pct">' + Math.round(width) + '%' + '</div><div class="name">'+ name +'</div></div>')
-    }
-
-    $('.top_category').mouseover(function() {
-      id = parseInt($(this).attr('section'));
-      rank = parseInt($(this).attr('rank'));
-      $('.section_' + id).addClass('top_' + rank);
-    });
-
-    $('.top_category').mouseout(function() {
-      id = parseInt($(this).attr('section'));
-      rank = parseInt($(this).attr('rank'));
-      $('.block.top_' + rank).removeClass('top_' + rank);
-    });
 
     $('#viz').remove();
     $('#vizcontainer').append('<div id="viz"></div>');
@@ -132,6 +101,56 @@ function Visualization( backend_obj ) {
 
     this.render( main );
   }
+
+
+  /* 
+
+	Creates the top categories bar in the visualization given a hash of categories and their respective values
+  
+	*/
+
+	this.create_top_categories = function(hash) {
+		//Sort the frequency hash for the top-category display
+    hash.sort( function(a,b) {
+      return b.value - a.value;
+    });
+
+
+   //Clear out the undefined entries
+    hash = hash.filter(function(){ return true });
+
+    hash_total = 0;
+    $.each(hash, function(index, value) {
+      if(typeof value != 'undefined')
+        hash_total += value.value;
+    });
+
+    $('#top_categories').html('');
+
+    for(i = 0; i < TOP_CATEGORIES; i++){
+      width = parseFloat(hash[i].value / hash_total) * 100;
+      name = this.backend.get_sector_name_by_id(hash[i].number);
+      cat = $('#top_categories').append('<div class="top_category top_' + i + '" rank="' + i + '" section="' + hash[i].number + '" style="width:' + Math.round(width) + '%;"><div class="pct">' + Math.round(width) + '%' + '</div><div class="name">'+ name +'</div></div>')
+    }
+
+    $('.top_category').mouseover(function() {
+      id = parseInt($(this).attr('section'));
+      rank = parseInt($(this).attr('rank'));
+      $('.section_' + id).addClass('top_' + rank);
+    });
+
+    $('.top_category').mouseout(function() {
+      id = parseInt($(this).attr('section'));
+      rank = parseInt($(this).attr('rank'));
+      $('.block.top_' + rank).removeClass('top_' + rank);
+    });
+	}
+
+	/* 
+	
+		Renders the children of a chosen node
+		
+	*/
 
 
    this.render = function( node ) {
@@ -155,7 +174,7 @@ function Visualization( backend_obj ) {
     //Add the children to the depth_wrappers
     $.each(node.children, function(index, child) {
 
-      console.log( node.childWidth(child) );
+      //console.log( node.childWidth(child) );
       var width = node.childWidth(child) -1; 
       if(width < 0) return;
 
