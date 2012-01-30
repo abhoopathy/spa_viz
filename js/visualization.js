@@ -27,17 +27,15 @@ function Visualization( backend_obj ) {
   //
   var OTHER_NAME = "Other";
 
-  var metric_id = 1;
-
-  this.init = function() {
-
-    vis.backend.get_categories( function() {
-      vis.backend.get_XML_by_sector( metric_id , function() {
-        xml_data = vis.backend.sector_XML;
-        vis.init_UI();
-      });
-
-    });
+  this.init = function(sector_id, metric_id) {
+		var params = controller.get_params();
+		sector_id = params.vis;
+		metric_id = params.metric;
+		
+		vis.backend.get_categories();
+		vis.xml_data = vis.backend.get_XML_by_sector_and_metric(sector_id, metric_id);
+		
+		vis.init_UI();
 
   }
 
@@ -52,6 +50,9 @@ function Visualization( backend_obj ) {
   this.populate_metric_picker = function(){
     var $metric_select = $('#metricSelect');
     var metrics = this.backend.get_metric_list();
+		var params = controller.get_params();
+		
+		$metric_select.children('option').remove();
 
     $.each(metrics, function(id, metric) {
       //"2":{ id:"2", name:"Water", path:"water" },
@@ -59,8 +60,11 @@ function Visualization( backend_obj ) {
 
     });
 
+		$metric_select[0].selectedIndex = params.metric - 1;
+
+
     $metric_select.change( function(event) {
-      window.location += '&metric='+$(this).attr('value');
+			window.location.hash = 'vis=' + params.vis + '&metric=' + $(this).attr('value');
     });
 
   }
@@ -70,7 +74,9 @@ function Visualization( backend_obj ) {
     data = $(xml_data);
 
     var outer = data.children().first().children().first();
-    console.log( outer );
+
+		frequency_hash = [];
+
     main = this.create_children(outer, 1);
 
 

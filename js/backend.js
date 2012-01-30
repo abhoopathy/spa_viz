@@ -40,8 +40,7 @@ function Backend() {
   this.get_sector_name_by_id = function(secID) { return this.sector_list[secID].sec_label; }
 
   /**
-   * Gets entire sector_list
-  array, e.g
+   * Gets entire sector_list array, e.g
    * [ {cat_id: "1", sec_id: "1", sec_label: "Oilseed farming", xml: "xml/newLoop$1MSector_1"}, ...]
    */
   this.get_sector_list = function() { return this.sector_list; }
@@ -78,19 +77,28 @@ function Backend() {
   /**
    * Retrieves the correct XMLdata
    */
-  this.get_XML_by_sector = function ( metric_id, cb ) {
+  this.get_XML_by_sector_and_metric = function (sector_id, metric_id, cb ) {
+		if(metric_id == undefined) metric_id = 1;
+		
     var metric_subpath = this.metrics[metric_id].path
+		var sector_file = sector_id + '.xml';
     var obj = this;
+		var params = controller.get_params();
+
     //newLoop$1MSector_234
     $.ajax({
         type: "GET",
-        url: this.DOMAIN + "xml/"+ metric_subpath + "/10.xml", //DOMAIN + sectorPath+".xml",
+        url: this.DOMAIN + "xml/"+ metric_subpath + "/" + sector_file, //DOMAIN + sectorPath+".xml",
         dataType: "xml",
         success: function(xml) {
           obj.sector_XML = xml;
-          cb();
+          if(cb != undefined) {
+						cb();
+					}
         }
       });	
+
+		return obj.sector_XML;
   }
 
   /**
@@ -102,7 +110,7 @@ function Backend() {
   this.get_categories = function(cb) {
 
     //already cached
-    if (this.category_list.length > 0) {
+    if (this.category_list.length > 0 && cb != undefined) {
       cb();
       return;
     }
@@ -128,7 +136,9 @@ function Backend() {
       });
 
       //callback function
-      cb();	
+			if(cb != undefined) {
+      	cb();	
+			}
     });
   }
 

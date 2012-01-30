@@ -7,15 +7,15 @@ function Controller( ) {
   var visualization = new Visualization( backend );
 
   $(window).hashchange( function(){
-    var params = get_params();
-
+    var params = controller.get_params();
+		
     if ("select" in params) {
       controller.show_selector_page();
       return;
     }
 
     if ("vis" in params) {
-      controller.show_sector_page( params["vis"] );
+      controller.show_sector_page( params["vis"], params["metric"] );
       return;
     }
 
@@ -29,17 +29,17 @@ function Controller( ) {
     visualization.hide();
   }
 
-  this.show_sector_page = function( sec_id ){
+  this.show_sector_page = function( sec_id, met_id ){
     sector_picker.hide();
     visualization.show();
-    visualization.init();
+    visualization.init(sec_id, met_id);
   }
 
   this.set_win_location = function(string) {
     window.location = "#"+string;
   }
 
-  get_params = function() {
+  this.get_params = function() {
     var parameters = {};
     var a = window.location.hash;
     var b = a.replace(/#/,'').split(/&/);
