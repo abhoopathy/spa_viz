@@ -61,7 +61,7 @@
           <select id="metricSelect"></select>
       </div>
       <div class="cleardiv"></div>
-      <a href="selector.php"><button id="backButton">Return To Sector Menu</button></a>
+      <a href=""><button id="backButton">Return To Sector Menu</button></a>
 
       <h4>Top 5 Emission Sources</h4>
       <div id="top_categories"></div>
