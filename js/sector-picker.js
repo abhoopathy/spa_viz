@@ -2,9 +2,10 @@
 
 function Controller( ) {
   var backend = new Backend();
+  var tooltip = new ToolTip();
   var controller = this;
-  var sector_picker = new SectorPicker( backend );
-  var visualization = new Visualization( backend );
+  var sector_picker = new SectorPicker( backend,tooltip );
+  var visualization = new Visualization( backend,tooltip );
 
   $(window).hashchange( function(){
     var params = controller.get_params();
@@ -55,11 +56,12 @@ function Controller( ) {
 }
 
 
-function SectorPicker( backend_obj ) {
+function SectorPicker( backend_obj, tooltip ) {
 
   this.$browse_by_cat_dialog = null;
   this.$browse_by_cat_buton = null;
   this.backend = backend_obj;
+  this.tooltip = tooltip;
   var $selector_page = $('#selector_page');
 
   this.hide = function() { $selector_page.hide(); }
@@ -107,12 +109,11 @@ function SectorPicker( backend_obj ) {
 
   this.init_tool_tips = function() {
     /* Tool Tip Stuff, see tooltip.js */
-    var tt = new ToolTip( $(document) );
 
     //TODO change this help text
-    tt.new_tip( $('#chooseMetric'), "Begin typing a sector name to visualize it's SPA visualization" );
-    tt.new_tip( $('#searchBySector'), "Begin typing a sector name to visualize it's SPA visualization" );
-    tt.new_tip( $('#browseByCategory'), "Browse the sectors by expanding the industry categories." );
+    tooltip.new_tip( $('#chooseMetric'), "Begin typing a sector name to visualize it's SPA visualization" );
+    tooltip.new_tip( $('#searchBySector'), "Begin typing a sector name to visualize it's SPA visualization" );
+    tooltip.new_tip( $('#browseByCategory'), "Browse the sectors by expanding the industry categories." );
   }
 
   this.submit_sector = function(sector_id) {

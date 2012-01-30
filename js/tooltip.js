@@ -28,7 +28,7 @@ function ToolTip ( document ) {
     .find('.help_tip_hide')
     .click( {obj: this}, function(event) {
       var tt = event.data.obj;
-      tt.hideTips();
+      tt.hide_tips();
     });
 
 

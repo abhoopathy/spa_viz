@@ -1,15 +1,22 @@
 // JavaScript Document
 
-function Visualization( backend_obj ) {
+function Visualization( backend_obj, tooltip ) {
 
   //Backend object, see backend.js
   this.backend = backend_obj;
 
+  //ToolTip object, see tooltip.js
+  this.tooltip = tooltip;
+
   // Deals with whole visualization page
   var $sector_page = $('#sector_page');
+  var $sector_title = $('#sectorName');
   this.hide = function() { $sector_page.hide(); }
   this.show = function() { $sector_page.show(); }
+  
   var vis = this;
+
+  var sector_name;
 
   //Various display variables and depth variables
   this.DISPLAY_WIDTH = $('#vizcontainer').width();
@@ -36,6 +43,9 @@ function Visualization( backend_obj ) {
 				vis.init_UI();
 			});
 		});
+
+    sector_name = vis.backend.get_sector_name_by_id(sector_id);
+    $sector_title.text("Sector: " + sector_name);
 
   }
 
@@ -69,10 +79,6 @@ function Visualization( backend_obj ) {
 
   }
 
-	
-
-	
-
   this.create_viz = function(xml_data) {
 	  var data = $(xml_data);
     var outer = data.children().first().children().first();
@@ -86,17 +92,16 @@ function Visualization( backend_obj ) {
 
     $('#viz').remove();
     $('#vizcontainer').append('<div id="viz"></div>');
-    $('#viz').append('<div class="block_wrapper" style="height:600px;"></div>')
+    $('#viz').append('<div class="block_wrapper" style=""></div>')
 
 
     /* side tool tips */
-    var tt = new ToolTip( $(document) );
 
     //TODO syntax change
 
-    tt.new_tip( $('#top_categories'),
+    this.tooltip.new_tip( $('#top_categories'),
         "These industries represent the top 5 overall emission sources within the sector. Hover over them to see where they appear in the path analysis");
-    tt.new_tip( $('#vizcontainer'),
+    this.tooltip.new_tip( $('#vizcontainer'),
         "Each \"depth\" on the tree chart represents the component make-up of emission sources. Click on a component to see it's subsequent components in the next depth." );
 
     this.render( main );

@@ -3,6 +3,9 @@
  *         aneesh.bhoopathy@gmail.com
  */
 
+//TODO: Important!! all getter functions should check if db was gotten already.
+//That is the entire point of having the backend class.
+
 /**
  * Creates an instance of Backend object
  *
