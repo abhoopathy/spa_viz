@@ -18,9 +18,33 @@ function Backend() {
   this.category_list = new Array() /* array of each category in DB */
   this.DOMAIN = ""; /* Domain where php calls should be made */
   this.sector_XML = null; /* XML data for sector */
-  this.metrics = {"1":{ id:"1", name:"Emissions", path:"emissions" }, /* array of metrics for UI */
-                  "2":{ id:"2", name:"Water", path:"water" },
-                  "3":{ id:"3", name:"Green House Gas", path:"ghg" }};
+  this.metrics = {
+      "1":{ id:"1", name:"Acidification Air", path:"acid_air" },
+      "2":{ id:"2", name:"CO", path:"co" },
+      "3":{ id:"3", name:"Eutrophication Air", path:"eutrophication_air" },
+      "4":{ id:"4", name:"Eutrophication Water", path:"eutrophication_water" },
+      "5":{ id:"5", name:"Global Warming", path:"global_warming" },
+      "6":{ id:"6", name:"HH Criteria Air", path:"hh_criteria_air" },
+      "7":{ id:"7", name:"High Ecotoxicity", path:"high_ecotoxicity" },
+      "8":{ id:"8", name:"High Human Health Cancer", path:"high_human_health_cancer" },
+      "9":{ id:"9", name:"High Human Health Noncancer", path:"high_human_health_noncancer" },
+      "10":{ id:"10", name:"Low Ecotoxicity", path:"low_ectoxicity" },
+      "11":{ id:"11", name:"Low Human Health Cancer", path:"low_human_health_cancer" },
+      "12":{ id:"12", name:"Low Human Health Noncancer", path:"low_human_health_noncancer" },
+      "13":{ id:"13", name:"NH3", path:"nh3" },
+      "14":{ id:"14", name:"NOX", path:"nox" },
+      "15":{ id:"15", name:"Ozone Depletion", path:"ozone_depletion" },
+      "16":{ id:"16", name:"PM-10", path:"pm10" },
+      "17":{ id:"17", name:"PM-25", path:"pm25" },
+      "18":{ id:"18", name:"Purch_Total_Energy", path:"purch_total_energy" },
+      "19":{ id:"19", name:"RCRA", path:"rcra" },
+      "20":{ id:"20", name:"Smog Air", path:"smog_air" },
+      "21":{ id:"21", name:"so2", path:"so2" },
+      "22":{ id:"22", name:"Total GHGs", path:"total_ghgs" },
+      "23":{ id:"23", name:"VOC", path:"voc" },
+      "24":{ id:"24", name:"Water Use", path:"water_use" }
+     };
+
 
   /**
    * gets metrics list defined above
