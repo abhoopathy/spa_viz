@@ -63,7 +63,7 @@
       <div class="cleardiv"></div>
       <a href=""><button id="backButton">Return To Sector Menu</button></a>
 
-      <h4>Top 5 Emission Sources</h4>
+      <h4>Top 5 Sources</h4>
       <div id="top_categories"></div>
 
       <h4>Economic Pathway</h4>
