@@ -12,6 +12,7 @@
 <script src="js/jquery-1.5.1.js" type="text/javascript"></script>
 <script src="js/jquery-ui-1.8.9.custom.min.js" type="text/javascript"></script>
 <script src="js/jquery.ba-hashchange.min.js" type="text/javascript"></script>
+<script src="js/jquery.tmpl.min.js" type="text/javascript"></script>
 <script src="js/backend.js" type="text/javascript"></script>
 <script src="js/tooltip.js" type="text/javascript"></script>
 <script src="js/visualization.js" type="text/javascript"></script>
@@ -28,7 +29,7 @@
 <body>
 <?php include('pageTop.php'); ?>
     
-  <div id="selector_page">
+  <div id="selector_page" class="page_container">
 
     <!--
 	 	<div class="aBox"id="chooseMetric">
@@ -52,16 +53,25 @@
         </div>
   </div>
 
-  <div id="sector_page">
+  <div id="sector_page" class="page_container">
 
     <div id="container" class="aBox" sec_path=" <?php echo $sec_path ?>">	
       <h2 id="sectorName">Sector: <?php echo $sec_name ?></h2>
-      <div id="metricChooserBox">
-          Metric:
-          <select id="metricSelect"></select>
-      </div>
       <div class="cleardiv"></div>
-      <a href=""><button id="backButton">Return To Sector Menu</button></a>
+
+      <div>
+        <a href=""><button id="back_button">Return To Sector Menu</button></a>
+        <button id="change_metric_button">Change Metric</button>
+
+        <div id="metric_picker_box">
+          <div>
+            <div class="metric_col first"></div>
+            <div class="metric_col"></div>
+            <div class="cleardiv"></div>
+          </div>
+        </div> <!-- end metric picker box -->
+
+      </div>
 
       <h4>Top 5 Sources</h4>
       <div id="top_categories"></div>
@@ -70,7 +80,11 @@
       <div id="vizcontainer" sec_id="<?php echo $sec_id ?>"></div>
     </div>
 
-  </div>
 
+
+  </div>
+  <script id="metric_list_item_template" type="text/html">
+    <li><a class="hoverable" href="#vis=186&metric=${id}">${name}</a> </li>
+  </script>
 </body>
 </html>

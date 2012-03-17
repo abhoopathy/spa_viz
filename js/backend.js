@@ -20,7 +20,7 @@ function Backend() {
   this.sector_XML = null; /* XML data for sector */
   this.metrics = {
       "1":{ id:"1", name:"Acidification Air", path:"acid_air" },
-      "2":{ id:"2", name:"CO", path:"co" },
+      "2":{ id:"2", name:"CO", path:"co"  },
       "3":{ id:"3", name:"Eutrophication Air", path:"eutrophication_air" },
       "4":{ id:"4", name:"Eutrophication Water", path:"eutrophication_water" },
       "5":{ id:"5", name:"Global Warming", path:"global_warming" },
@@ -45,11 +45,54 @@ function Backend() {
       "24":{ id:"24", name:"Water Use", path:"water_use" }
      };
 
+this.metric_list = [
+
+  {heading:"Energy & Greenhouse Gases",
+   metrics:[
+      {id:"1", name:"Energy", path:"purch_total_energy", units:"Terajoules"},
+      {id:"2", name:"Greenhouse Gases", path:"total_ghgs", units:"metric tons CO2-equivalents"}
+  ]},
+
+  {heading:"US EPA TRACI Indicators",
+   metrics:[
+      {id:"3", name:"Acidification (Air)", path:"acid_air", units:"Metric Tons"},
+      {id:"4", name:"Eutrophication (Air)", path:"eutrophication_air", units:"Metric Tons"},
+      {id:"5", name:"Eutrophication (Water)", path:"eutrophication_water", units:"Metric Tons"},
+      {id:"6", name:"Ecotoxicity (Low)", path:"low_ectoxicity", units:"Metric Tons"},
+      {id:"7", name:"Ecotoxicity (High)", path:"high_ecotoxicity", units:"Metric Tons"},
+      {id:"8", name:"Global Warming (Air)", path:"global_warming", units:"Metric Tons"},
+      {id:"9", name:"Human Health Criteria (Air)", path:"hh_criteria_air", units:"Metric Tons"},
+      {id:"10", name:"Human Health Cancer (Low)", path:"high_human_health_cancer", units:"Metric Tons"},
+      {id:"11", name:"Human Health Cancer (High)", path:"high_human_health_noncancer", units:"Metric Tons"},
+      {id:"12", name:"Human Health Non-Cancer (Low)", path:"low_human_health_cancer", units:"Metric Tons"},
+      {id:"13", name:"Human Health Non-Cancer (High)", path:"low_human_health_noncancer", units:"Metric Tons"},
+      {id:"14", name:"Ozone Depletion", path:"ozone_depletion", units:"Metric Tons"},
+      {id:"15", name:"Smog (Air)", path:"smog_air", units:"Metric Tons"}
+  ]},
+
+  {heading:"Conventional Air Emissions",
+   metrics:[
+      {id:"16", name:"Carbon Monoxide (CO)", path:"co", units:"metric tons,"},
+      {id:"17", name:"Ammonia (NH3)", path:"nh3", units:"metric tons"},
+      {id:"18", name:"Nitrogen Oxides (NOx)", path:"nox", units:"metric tons"},
+      {id:"19", name:"Particulate Matter < 10 µ (PM10)", path:"pm10", units:"metric tons"},
+      {id:"20", name:"Particulate Matter < 2.5 µ (PM2.5)", path:"pm25", units:"metric tons"},
+      {id:"21", name:"Sulfur Dioxide (SO2)", path:"so2", units:"metric tons"},
+      {id:"22", name:"Volatile Organics (VOC)", path:"voc", units:"metric tons"}
+  ]},
+
+  {heading:"Other Indicators",
+   metrics:[
+    {id:"23", name:"Hazardous Waste (RCRA C)", path:"rcra", units:"tons (short)"},
+    {id:"24", name:"Water Use", path:"water_use", units:"thousand gallons"}
+  ]},
+]
+
 
   /**
    * gets metrics list defined above
    */
-  this.get_metric_list = function() { return this.metrics; }
+  this.get_metric_list = function() { return this.metric_list; }
 
   /**
    * Gets section data JSON given it's ID, for example

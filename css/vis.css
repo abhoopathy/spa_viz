@@ -1,22 +1,16 @@
 #vizcontainer {
 }
 #container {
+  float: left;
 }
+
+
 #backButton {
 }
 
 #sectorName {
   float: left;
 }
-#metricChooserBox {
-  margin-top: 3px;
-  float: right;
-}
-
-#metricSelect {
-  width: 150px;
-}
-
 /*Begin nolans css*/
 
 #viz {
@@ -198,3 +192,51 @@
 #help a:hover {
 	color: #555;
 }
+
+/* METRIC PICKER STYLING ***************************/
+
+#metric_picker_box {
+  display: none;
+  position: absolute;
+  left: 215px;
+	padding: 3px;
+	/*border-top: 1px #222222 solid;*/
+	background-color: #E9E9E9;
+  border: 1px solid #999;
+
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+}
+
+
+.first {
+  margin-left: 0px;
+}
+
+.metric_col {
+  float: left;
+  margin-left: 10px;
+}
+
+#metric_picker_box h4 {
+  padding-top: 3px;
+  border-top: 1px solid #CCC;
+}
+
+#metric_picker_box ul {
+  list-style: none;
+  padding-left: 5px;
+  margin-top: 5px;
+}
+
+#metric_picker_box li {
+  border-top: 1px solid #CCC;
+  padding: 3px;
+}
+
+#metric_picker_box li a {
+  text-decoration: none;
+}
+
+
+/****************************************************/

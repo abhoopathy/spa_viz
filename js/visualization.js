@@ -11,9 +11,11 @@ function Visualization( backend_obj, tooltip ) {
   // Deals with whole visualization page
   var $sector_page = $('#sector_page');
   var $sector_title = $('#sectorName');
+  var $metric_picker = $('#metric_picker_box');
   this.hide = function() { $sector_page.hide(); }
   this.show = function() { $sector_page.show(); }
-  
+  this.ui_initialized = false;
+
   var vis = this;
 
   var sector_name;
@@ -34,48 +36,65 @@ function Visualization( backend_obj, tooltip ) {
 
   this.init = function(sector_id, metric_id) {
 		var params = controller.get_params();
-		sector_id = params.vis;
-		metric_id = params.metric;
-		var xml_data;
+		this.sector_id = params.vis;
+		this.metric_id = params.metric;
 		
 		vis.backend.get_categories(function() {
-			vis.backend.get_XML_by_sector_and_metric(sector_id, metric_id,	function() {
-				vis.init_UI();
+			vis.backend.get_XML_by_sector_and_metric(sector_id, metric_id,	function(xml_data) {
+        vis.create_viz(xml_data);
+        vis.init_UI();
 			});
 		});
 
     sector_name = vis.backend.get_sector_name_by_id(sector_id);
     $sector_title.text("Sector: " + sector_name);
-
   }
 
   this.init_UI = function() {
 
-    //initialize back button TODO put this somewhere else
-    $('#backButton').button({ icons: { primary: "ui-icon-carat-1-w" } });
-    this.populate_metric_picker();
-		xml_data = vis.backend.sector_XML;
-		this.create_viz(xml_data);
+    if (!this.ui_initialized) {
+      $('#back_button').button({ icons: { primary: "ui-icon-carat-1-w" } });
+      $('#change_metric_button').button({ icons: { secondary: "ui-icon-triangle-1-s" } })
+        .click(function() {
+          $metric_picker.slideToggle();
+        });
+
+        console.log($('#change_metric_button').position().left);
+
+      this.populate_metric_picker();
+    }
+    this.ui_initialized = true;
   }
 
   this.populate_metric_picker = function(){
-    var $metric_select = $('#metricSelect');
-    var metrics = this.backend.get_metric_list();
-		var params = controller.get_params();
-		
-		$metric_select.children('option').remove();
+    var cat_list = this.backend.get_metric_list();
 
-    $.each(metrics, function(id, metric) {
-      //"2":{ id:"2", name:"Water", path:"water" },
-      $metric_select.append('<option value="'+id+'">'+metric.name+'</option>')
+    $.template("metric_list_item_template",
+      '<li><a class="hoverable" href="#vis='+this.sector_id+'&metric=${id}">${name}</a> </li>' );
+
+    $.each(cat_list, function(i, cat) {
+      var $first_col = $metric_picker.find('.metric_col:eq(0)');
+      var $second_col = $metric_picker.find('.metric_col:eq(1)');
+
+
+      f = function($col) {
+        $col.append('<h4>'+cat.heading+'</h4>')
+        $list = $('<ul></ul>').appendTo($col);
+        $.tmpl("metric_list_item_template",cat.metrics).appendTo($list);
+      };
+
+      console.log(i);
+      if (i < 2)
+        f($first_col)
+      else
+        f($second_col)
+
     });
 
-		$metric_select[0].selectedIndex = params.metric - 1;
-
-
-    $metric_select.change( function(event) {
-			window.location.hash = 'vis=' + params.vis + '&metric=' + $(this).attr('value');
-    });
+    $("#metric_picker_box li a")
+        .click(function() {
+          $metric_picker.slideToggle();
+        });
 
   }
 

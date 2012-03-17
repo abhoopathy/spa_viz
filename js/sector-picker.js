@@ -94,19 +94,6 @@ function SectorPicker( backend_obj, tooltip ) {
     });
   }
 
-  /*
-  this.populate_metric_picker = function() {
-    var $metric_select = $('#metricSelect');
-    var metrics = this.backend.get_metric_list();
-
-    $.each(metrics, function(id, metric) {
-      //"2":{ id:"2", name:"Water", path:"water" },
-      $metric_select.append('<option value="'+id+'">'+metric.name+'</option>')
-
-    });
-  }
-  */
-
   this.init_tool_tips = function() {
     /* Tool Tip Stuff, see tooltip.js */
 
